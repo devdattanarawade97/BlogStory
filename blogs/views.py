@@ -1,4 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
+
+from .forms import CustomUserCreationForm
 from .models import BlogPost, Category, Like
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
@@ -75,14 +77,13 @@ def like_blog(request, pk):
 # User Registration
 def register(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            login(request, user)
-            messages.success(request, f'Welcome {user.username}!')
-            return redirect('blog_list')
+            form.save()  # Save the user to the database
+            return redirect('login')  # Redirect to login page after successful registration
     else:
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
+
     return render(request, 'register.html', {'form': form})
 
 # User Login
