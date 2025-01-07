@@ -94,7 +94,10 @@ def login_view(request):
             user = form.get_user()
             login(request, user)
             messages.success(request, 'Logged in successfully!')
-            return redirect('blog_list')  # Redirect to the blog list or home page
+
+            # Check if there's a "next" parameter and redirect to it, otherwise go to blog list
+            next_url = request.GET.get('next', 'blog_list')
+            return redirect(next_url)  # Redirect to the next page or blog list
         else:
             messages.error(request, 'Invalid username or password')
     else:

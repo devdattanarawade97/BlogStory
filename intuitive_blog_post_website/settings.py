@@ -135,4 +135,6 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # settings.py
 
-LOGOUT_REDIRECT_URL = '/'  # Redirect to homepage or any other URL
+LOGOUT_REDIRECT_URL = '/blogs'  # Redirect to homepage or any other URL
+# settings.py
+LOGIN_URL = '/login/'  # Or any other path to your login page

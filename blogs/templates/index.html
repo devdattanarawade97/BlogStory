@@ -1,39 +1,196 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Latest Blogs</h1>
+<div class="container">
+    <h1 class="page-title">Latest Blogs</h1>
 
-    <!-- Category Filter Dropdown -->
-    <form method="get" class="mb-3">
-        <label for="category">Filter by Category:</label>
-        <select name="category" id="category" class="form-control">
-            <option value="">All Categories</option>
-            {% for category in categories %}
-                <option value="{{ category.id }}" {% if category.id == request.GET.category %}selected{% endif %}>{{ category.name }}</option>
-            {% endfor %}
-        </select>
-        <button type="submit" class="btn btn-primary">Filter</button>
-    </form>
+    <!-- Filter Section -->
+    <div class="filter-container">
+        <!-- Category Filter -->
+        <form method="get" class="filter-form">
+            <label for="category">Filter by Category:</label>
+            <select name="category" id="category" class="filter-input">
+                <option value="">All Categories</option>
+                {% for category in categories %}
+                    <option value="{{ category.id }}" {% if category.id == request.GET.category %}selected{% endif %}>{{ category.name }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="filter-btn">Filter</button>
+        </form>
 
-    <!-- Date Filter Form -->
-    <form method="get" class="mb-3">
-        <label for="filter_date">Filter by Date:</label>
-        <input type="date" name="date" id="filter_date" value="{{ filter_date|date:'Y-m-d' }}">
-        <button type="submit" class="btn btn-primary">Filter</button>
-    </form>
+        <!-- Date Filter -->
+        <form method="get" class="filter-form">
+            <label for="filter_date">Filter by Date:</label>
+            <input type="date" name="date" id="filter_date" class="filter-input" value="{{ filter_date|date:'Y-m-d' }}">
+            <button type="submit" class="filter-btn">Filter</button>
+        </form>
+    </div>
 
-    <div class="row">
+    <!-- Blog Cards Section -->
+    <div class="blog-cards">
         {% for blog in blogs %}
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ blog.title }}</h5>
-                        <p class="card-text">{{ blog.description }}</p>
-                        <a href="{% url 'blog_detail' blog.pk %}" class="btn btn-primary">Read More</a>
-                        <a href="{% url 'like_blog' blog.pk %}" class="btn btn-success">Like ({{ blog.like_count }})</a>
-                    </div>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ blog.title }}</h5>
+                    <p class="card-description">{{ blog.description }}</p>
+                    <a href="{% url 'blog_detail' blog.pk %}" class="card-btn primary-btn">Read More</a>
+                    <a href="{% url 'like_blog' blog.pk %}" class="card-btn success-btn">Like ({{ blog.like_count }})</a>
                 </div>
             </div>
         {% endfor %}
     </div>
+</div>
+
+<!-- Embedded CSS -->
+<style>
+/* Global Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Page Title */
+.page-title {
+    font-size: 2rem;
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 25px;
+    padding: 15px 0;
+    background-color: #ecf0f1;
+    border-radius: 8px;
+}
+
+/* Filter Section */
+.filter-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 25px;
+}
+
+.filter-form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.filter-form label {
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.filter-input {
+    padding: 6px 10px;
+    font-size: 0.95rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+}
+
+.filter-btn {
+    padding: 8px 12px;
+    background-color: #3498db;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.filter-btn:hover {
+    background-color: #2980b9;
+}
+
+/* Blog Cards */
+.blog-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.card-body {
+    padding: 20px;
+    text-align: center;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.card-description {
+    color: #7f8c8d;
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+    line-height: 1.6;
+    height: auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-btn {
+    display: inline-block;
+    padding: 10px;
+    width: 100%;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+.primary-btn {
+    background-color: #3498db;
+    color: #fff;
+}
+
+.primary-btn:hover {
+    background-color: #2980b9;
+}
+
+.success-btn {
+    background-color: #2ecc71;
+    color: #fff;
+}
+
+.success-btn:hover {
+    background-color: #27ae60;
+}
+
+/* Responsive Layout */
+@media (max-width: 768px) {
+    .filter-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .card {
+        margin: 0 auto;
+    }
+}
+</style>
+
 {% endblock %}

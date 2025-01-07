@@ -25,7 +25,7 @@
         <header>
             <!-- base.html -->
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                <a class="navbar-brand" href="/">BlogStory - Where Stories Come to Life</a>
+                <a class="navbar-brand" href="/blogs">BlogStory - Where Stories Come to Life</a>
                 <div class="collapse navbar-collapse">
                     <ul class="navbar-nav ml-auto">
                         {% if user.is_authenticated %}
@@ -36,7 +36,7 @@
                             </form>
 
                         </li>
-                        
+
                         {% else %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'login' %}">Login</a>
