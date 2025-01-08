@@ -32,14 +32,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DJANGO_DEBUG', default='True', cast=bool)
-
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost').split(',')
 if DEBUG:
 
-    ALLOWED_HOSTS = []
     SECRET_KEY=os.environ.get('DJANGO_SECRET_KEY')
 
 else:
-    ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost').split(',')
+    
 
     SECRET_KEY = config('DJANGO_SECRET_KEY', default=get_random_secret_key())
 
