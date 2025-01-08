@@ -32,7 +32,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DJANGO_DEBUG', default='True', cast=bool)
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost').split(',')
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(',')
+
 if DEBUG:
 
     SECRET_KEY=os.environ.get('DJANGO_SECRET_KEY')
@@ -103,8 +104,12 @@ else:
     # Use PostgreSQL for production
     DATABASE_URL = config('DATABASE_URL', default='postgres://user:password@localhost:5432/db_name')
 
+    # DATABASES = {
+    #     'default': dj_database_url.parse(DATABASE_URL)
+    # }
+  
     DATABASES = {
-        'default': dj_database_url.parse(DATABASE_URL)
+        'default': dj_database_url.config(default=DATABASE_URL)
     }
 
 
