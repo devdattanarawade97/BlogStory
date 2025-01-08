@@ -31,7 +31,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DJANGO_DEBUG")
+DEBUG = config('DJANGO_DEBUG', default='True', cast=bool)
 
 if DEBUG:
 
@@ -39,9 +39,10 @@ if DEBUG:
     SECRET_KEY=os.environ.get('DJANGO_SECRET_KEY')
 
 else:
-    ALLOWED_HOSTS = [os.environ.get('ALLOWED_HOSTS')]
+    ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost').split(',')
 
-    SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY' , get_random_secret_key())
+    SECRET_KEY = config('DJANGO_SECRET_KEY', default=get_random_secret_key())
+
 
 
 # Application definition
