@@ -15,7 +15,8 @@ from django.core.management.utils import get_random_secret_key
 import os
 # import dotenv
 from dotenv import load_dotenv
-
+from decouple import config
+import dj_database_url
 load_dotenv()
 
 
@@ -38,6 +39,7 @@ if DEBUG:
     SECRET_KEY='django-insecure-$6#xpah2kgcq^!whlnnx#(j%s4@a&*u2s^h0f@%&gwqua0#)&('
 else:
     ALLOWED_HOSTS = [os.environ.get('ALLOWED_HOSTS')]
+
     SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY' , get_random_secret_key())
 
 
@@ -98,15 +100,20 @@ if DEBUG:
 else:
   
     DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.postgresql_psycopg2',
-                'NAME': os.environ.get('DB_NAME'),
-                'USER': os.environ.get('DB_USER'),
-                'PASSWORD': os.environ.get('DB_PASSWORD'),
-                'HOST': os.environ.get('DB_HOST'),
-                'PORT': os.environ.get('DB_PORT'),
-            }
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',  # Using psycopg2 for PostgreSQL
+            'NAME': config('DB_NAME', default='default_db_name'),
+            'USER': config('DB_USER', default='default_user'),
+            'PASSWORD': config('DB_PASSWORD', default='default_password'),
+            'HOST': config('DB_HOST', default='localhost'),
+            'PORT': config('DB_PORT', default='5432'),
         }
+    }
+    #     DATABASE_URL=os.environ.get('DATABASE_URL')
+
+    # DATABASES = {
+    #     'default':dj_database_url.config()
+    # }
 
 
 
