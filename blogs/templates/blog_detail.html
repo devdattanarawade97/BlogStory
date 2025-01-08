@@ -11,7 +11,7 @@
             <p class="text-center text-muted mb-4">
                 Published on 
                 <span class="fw-bold">{{ blog.publish_date|date:"F j, Y, g:i a" }}</span> | 
-                <span class="badge bg-primary fs-6">{{ blog.category }}</span>
+                <span class="badge bg-success text-white fs-6">{{ blog.category }}</span>
             </p>
             
             <hr class="my-4">
@@ -41,37 +41,34 @@
     </div>
 </div>
 
-<!-- Toast Notification -->
-<div id="toast" class="toast align-items-center text-bg-success border-0 p-3 shadow-lg" 
-    style="position: fixed; bottom: 1rem; right: 1rem; z-index: 1050; display: none;">
-    <div class="d-flex">
-        <div class="toast-body fs-6">
-            Blog link copied to clipboard!
-        </div>
-        <button type="button" class="btn-close btn-close-white me-2 m-auto" aria-label="Close" onclick="closeToast()"></button>
-    </div>
+<!-- Copy Confirmation Message -->
+<div id="copy-confirmation" class="alert alert-success alert-dismissible fade show" role="alert" 
+    style="position: fixed; top: 1rem; right: 1rem; z-index: 1050; display: none; min-width: 250px;">
+    <strong>Blog link copied to clipboard</strong> 
+    <button type="button" class="btn-close" aria-label="Close" onclick="closeCopyConfirmation()"></button>
 </div>
 
 <script>
     // Copy blog link to clipboard
     function copyToClipboard(link) {
         navigator.clipboard.writeText(link).then(() => {
-            // Show toast notification
-            const toast = document.getElementById('toast');
-            toast.style.display = 'block';
+            // Show confirmation message
+            const confirmation = document.getElementById('copy-confirmation');
+            confirmation.style.display = 'block';
             setTimeout(() => {
-                toast.style.display = 'none';
+                confirmation.style.display = 'none';
             }, 3000);
         }).catch((error) => {
             console.error('Error copying link: ', error);
         });
     }
 
-    // Close toast notification
-    function closeToast() {
-        const toast = document.getElementById('toast');
-        toast.style.display = 'none';
+    // Close confirmation message
+    function closeCopyConfirmation() {
+        const confirmation = document.getElementById('copy-confirmation');
+        confirmation.style.display = 'none';
     }
+
 </script>
 
 <style>
@@ -107,8 +104,10 @@
         background-color: #218838;
     }
 
-    .toast-body {
+    .alert {
         font-family: 'Roboto', sans-serif;
+        font-size: 1rem;
+        border-radius: 10px;
     }
 </style>
 {% endblock %}

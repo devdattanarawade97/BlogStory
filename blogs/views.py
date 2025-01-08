@@ -83,6 +83,7 @@ def like_blog(request, pk):
             messages.success(request, 'You liked this blog.')
     else:
         messages.error(request, 'You need to log in to like a blog.')
+        return redirect('login')  # Redirect to login page (replace 'login' with your actual login URL name)
 
     return redirect('blog_detail', pk=pk)
 
