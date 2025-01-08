@@ -101,21 +101,21 @@ if DEBUG:
 
 else:
   
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',  # Using psycopg2 for PostgreSQL
-            'NAME': config('DB_NAME', default='default_db_name'),
-            'USER': config('DB_USER', default='default_user'),
-            'PASSWORD': config('DB_PASSWORD', default='default_password'),
-            'HOST': config('DB_HOST', default='localhost'),
-            'PORT': config('DB_PORT', default='5432'),
-        }
-    }
-    #     DATABASE_URL=os.environ.get('DATABASE_URL')
-
     # DATABASES = {
-    #     'default':dj_database_url.config()
+    #     'default': {
+    #         'ENGINE': 'django.db.backends.postgresql_psycopg2',  # Using psycopg2 for PostgreSQL
+    #         'NAME': config('DB_NAME', default='default_db_name'),
+    #         'USER': config('DB_USER', default='default_user'),
+    #         'PASSWORD': config('DB_PASSWORD', default='default_password'),
+    #         'HOST': config('DB_HOST', default='localhost'),
+    #         'PORT': config('DB_PORT', default='5432'),
+    #     }
     # }
+        DATABASE_URL=config('DATABASE_URL')
+
+        DATABASES = {
+            'default':dj_database_url.config()
+        }
 
 
 
