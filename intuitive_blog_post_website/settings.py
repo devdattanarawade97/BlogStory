@@ -13,6 +13,12 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 from django.core.management.utils import get_random_secret_key
 import os
+# import dotenv
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -27,7 +33,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DEBUG = False
 
 if DEBUG:
-    
+
     ALLOWED_HOSTS = []
     SECRET_KEY='django-insecure-$6#xpah2kgcq^!whlnnx#(j%s4@a&*u2s^h0f@%&gwqua0#)&('
 else:
@@ -90,16 +96,17 @@ if DEBUG:
     }
 
 else:
+  
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ.get('DB_NAME'),
-            'USER': os.environ.get('DB_USER'),
-            'PASSWORD': os.environ.get('DB_PASSWORD'),
-            'HOST': os.environ.get('DB_HOST'),
-            'PORT': os.environ.get('DB_PORT'),
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql_psycopg2',
+                'NAME': os.environ.get('DB_NAME'),
+                'USER': os.environ.get('DB_USER'),
+                'PASSWORD': os.environ.get('DB_PASSWORD'),
+                'HOST': os.environ.get('DB_HOST'),
+                'PORT': os.environ.get('DB_PORT'),
+            }
         }
-    }
 
 
 
