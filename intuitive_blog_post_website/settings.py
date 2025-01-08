@@ -90,7 +90,7 @@ WSGI_APPLICATION = 'intuitive_blog_post_website.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-if config('DEBUG', default='False', cast=bool):
+if DEBUG:
     # Use SQLite for development
     DATABASES = {
         'default': {
@@ -98,7 +98,7 @@ if config('DEBUG', default='False', cast=bool):
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
-    
+
 else:
     # Use PostgreSQL for production
     DATABASE_URL = config('DATABASE_URL', default='postgres://user:password@localhost:5432/db_name')
