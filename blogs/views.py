@@ -1,3 +1,4 @@
+from django.http import HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404, redirect
 
 from .forms import CustomUserCreationForm
@@ -38,13 +39,24 @@ def blog_list(request):
 
 
 # Blog Detail - View Full Blog Post
-@login_required
 def blog_detail(request, pk):
     blog = get_object_or_404(BlogPost, pk=pk)
-    context = {
-        'blog': blog,
-    }
-    return render(request, 'blog_detail.html', context)
+    
+    # Check if the blog is published
+    if blog.is_published:
+        context = {
+            'blog': blog,
+        }
+        return render(request, 'blog_detail.html', context)
+    else:
+        # Restrict unpublished blogs to logged-in users
+        if request.user.is_authenticated:
+            context = {
+                'blog': blog,
+            }
+            return render(request, 'blog_detail.html', context)
+        else:
+            return HttpResponseForbidden("You do not have permission to view this unpublished blog.")
 
 # Filter Blogs by Category
 def filter_by_category(request, category_id):
