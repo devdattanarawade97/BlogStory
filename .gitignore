@@ -15,13 +15,13 @@ __pycache__/
 *.sqlite3
 db.sqlite3
 
-# Media
-/media
-/mediafiles
+# # Media
+# /media
+# /mediafiles
 
-# Static files
-/static
-/staticfiles
+# # Static files
+# /static
+# /staticfiles
 
 # Local settings
 settings_local.py
