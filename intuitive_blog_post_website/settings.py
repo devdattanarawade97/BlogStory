@@ -26,7 +26,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-if DEBUG==True:
+if DEBUG:
     ALLOWED_HOSTS = []
 else:
     ALLOWED_HOSTS = [os.environ.get('ALLOWED_HOSTS')]
@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'intuitive_blog_post_website.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-if DEBUG==True:
+if DEBUG:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -97,6 +97,7 @@ else:
             'PORT': os.environ.get('DB_PORT'),
         }
     }
+
 
 
 # Password validation
