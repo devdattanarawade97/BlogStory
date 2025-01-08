@@ -1,1 +1,63 @@
+# Byte-compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment variables
 .env
+*.env
+
+# Django-specific
+*.log
+*.pot
+*.pyc
+*.pyo
+*.sqlite3
+db.sqlite3
+
+# Media
+/media
+/mediafiles
+
+# Static files
+/static
+/staticfiles
+
+# Local settings
+settings_local.py
+
+# Virtual environment
+.venv/
+venv/
+ENV/
+
+# IDE-specific
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Testing
+.coverage
+.tox/
+.pytest_cache/
+
+# Migrations
+migrations/
+*/migrations/__pycache__/
+*/migrations/*.pyc
+
+# Build
+build/
+dist/
+*.egg-info/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
