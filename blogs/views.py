@@ -42,21 +42,15 @@ def blog_list(request):
 def blog_detail(request, pk):
     blog = get_object_or_404(BlogPost, pk=pk)
     
-    # Check if the blog is published
-    if blog.is_published:
+    # Check if the blog is published or if the user is logged in
+    if blog.is_published or request.user.is_authenticated:
         context = {
             'blog': blog,
         }
         return render(request, 'blog_detail.html', context)
     else:
         # Restrict unpublished blogs to logged-in users
-        if request.user.is_authenticated:
-            context = {
-                'blog': blog,
-            }
-            return render(request, 'blog_detail.html', context)
-        else:
-            return HttpResponseForbidden("You do not have permission to view this unpublished blog.")
+        return HttpResponseForbidden("You do not have permission to view this unpublished blog.")
 
 # Filter Blogs by Category
 def filter_by_category(request, category_id):
