@@ -98,6 +98,7 @@ if config('DEBUG', default='False', cast=bool):
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
+    
 else:
     # Use PostgreSQL for production
     DATABASE_URL = config('DATABASE_URL', default='postgres://user:password@localhost:5432/db_name')
