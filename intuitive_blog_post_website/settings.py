@@ -36,7 +36,7 @@ DEBUG = False
 if DEBUG:
 
     ALLOWED_HOSTS = []
-    SECRET_KEY='django-insecure-$6#xpah2kgcq^!whlnnx#(j%s4@a&*u2s^h0f@%&gwqua0#)&('
+    SECRET_KEY=os.environ.get('DJANGO_SECRET_KEY')
 else:
     ALLOWED_HOSTS = [os.environ.get('ALLOWED_HOSTS')]
 
