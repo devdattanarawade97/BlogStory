@@ -90,32 +90,21 @@ WSGI_APPLICATION = 'intuitive_blog_post_website.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-if DEBUG:
+if config('DEBUG', default='False', cast=bool):
+    # Use SQLite for development
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
-
 else:
-  
-    # DATABASES = {
-    #     'default': {
-    #         'ENGINE': 'django.db.backends.postgresql_psycopg2',  # Using psycopg2 for PostgreSQL
-    #         'NAME': config('DB_NAME', default='default_db_name'),
-    #         'USER': config('DB_USER', default='default_user'),
-    #         'PASSWORD': config('DB_PASSWORD', default='default_password'),
-    #         'HOST': config('DB_HOST', default='localhost'),
-    #         'PORT': config('DB_PORT', default='5432'),
-    #     }
-    # }
-        DATABASE_URL=config('DATABASE_URL')
+    # Use PostgreSQL for production
+    DATABASE_URL = config('DATABASE_URL', default='postgres://user:password@localhost:5432/db_name')
 
-        DATABASES = {
-            'default':dj_database_url.config()
-        }
-
+    DATABASES = {
+        'default': dj_database_url.parse(DATABASE_URL)
+    }
 
 
 # Password validation
