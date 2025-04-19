@@ -1,119 +1,244 @@
 {% extends 'base.html' %}
+{% load static %} {# Load static files if needed for CSS/JS in base.html #}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="card shadow-lg border-0">
-        <div class="card-body p-5">
-            <!-- Blog Title -->
-            <h1 class="card-title display-4 text-center font-weight-bold mb-4">{{ blog.title }}</h1>
-            
-            <!-- Blog Meta Info -->
-            <p class="text-center text-muted mb-4">
-                Published on 
-                <span class="fw-bold">{{ blog.publish_date|date:"F j, Y, g:i a" }}</span> | 
-                <span class="badge bg-success text-white fs-6">{{ blog.category }}</span>
-            </p>
-            
-            <hr class="my-4">
-            
-            <!-- Blog Content -->
-            <p class="card-text fs-5 lh-lg">{{ blog.content }}</p>
-            
-            <div class="mt-5 d-flex justify-content-between align-items-center">
-                <!-- Like Button -->
-                <div>
-                    <form id="like-form" method="POST" action="{% url 'like_blog' blog.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-primary btn-lg px-4">
-                            ❤️ Like (<span id="like-count">{{ blog.like_count }}</span>)
-                        </button>
-                    </form>
-                </div>
-                
-                <!-- Share Button -->
-                <div>
-                    <button id="share-button" class="btn btn-success btn-lg px-4" onclick="copyToClipboard('{{ request.build_absolute_uri }}')">
-                        📤 Share
+
+{# Header remains centered using .container #}
+<header class="blog-header py-5 text-center">
+    <div class="container">
+        <h1 class="display-5 display-lg-4 fw-bold mb-3">{{ blog.title }}</h1>
+        <p class="text-muted mb-0">
+            Published on
+            <span class="fw-medium">{{ blog.publish_date|date:"F j, Y" }}</span>
+            {% if blog.category %}
+            <span class="mx-2">|</span>
+            <span class="badge bg-primary text-white rounded-pill px-3 py-1 fs-7">{{ blog.category }}</span>
+            {% endif %}
+        </p>
+    </div>
+</header>
+
+{# Main content area now uses container-fluid for full width #}
+<main class="container-fluid mt-4 mb-5">
+    {# Removed shadow-sm and rounded for better full-width look, kept padding/bg #}
+    <article class="blog-post-content bg-white p-4 p-md-5">
+
+        <div class="content-body lh-lg">
+            {{ blog.content|safe }}
+        </div>
+
+        <hr class="my-5">
+
+        {# Like/Share buttons - still centered within the article padding #}
+        <div class="row mt-4 g-3 justify-content-center text-center"> {# Added text-center #}
+            <div class="col-12 col-md-auto d-grid">
+                <form id="like-form" method="POST" action="{% url 'like_blog' blog.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-lg w-100 d-flex align-items-center justify-content-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
+                        </svg>
+                        <span>Like (<span id="like-count">{{ blog.like_count }}</span>)</span>
                     </button>
-                </div>
+                </form>
+            </div>
+
+            <div class="col-12 col-md-auto d-grid">
+                <button type="button" id="share-button"
+                        class="btn btn-outline-secondary btn-lg w-100 d-flex align-items-center justify-content-center gap-2"
+                        data-copy-url="{{ request.build_absolute_uri }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-share-fill" viewBox="0 0 16 16">
+                        <path d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.5 2.5 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5"/>
+                    </svg>
+                    <span>Share</span>
+                </button>
+                <span id="share-feedback" class="d-block mt-1 small" aria-live="polite"></span>
             </div>
         </div>
-    </div>
-</div>
 
-<!-- Copy Confirmation Message -->
-<div id="copy-confirmation" class="alert alert-success alert-dismissible fade show" role="alert" 
-    style="position: fixed; top: 1rem; right: 1rem; z-index: 1050; display: none; min-width: 250px;">
-    <strong>Blog link copied to clipboard</strong> 
-    <button type="button" class="btn-close" aria-label="Close" onclick="closeCopyConfirmation()"></button>
-</div>
+    </article>
+</main>
 
 <script>
-    // Copy blog link to clipboard
-    function copyToClipboard(link) {
-        navigator.clipboard.writeText(link).then(() => {
-            // Show confirmation message
-            const confirmation = document.getElementById('copy-confirmation');
-            confirmation.style.display = 'block';
-            setTimeout(() => {
-                confirmation.style.display = 'none';
-            }, 3000);
-        }).catch((error) => {
-            console.error('Error copying link: ', error);
+// Your existing Javascript remains the same
+document.addEventListener('DOMContentLoaded', function () {
+    const shareButton = document.getElementById('share-button');
+    const feedbackElement = document.getElementById('share-feedback');
+    let feedbackTimeout = null; // Variable to hold the timeout
+
+    if (shareButton && feedbackElement) {
+        shareButton.addEventListener('click', function () {
+            const linkToCopy = this.getAttribute('data-copy-url');
+            console.log("Attempting to copy link:", linkToCopy);
+
+            if (!linkToCopy) {
+                console.error("Share button 'data-copy-url' attribute is missing or empty.");
+                feedbackElement.textContent = 'Error: No URL found!';
+                feedbackElement.className = 'd-block mt-1 small text-danger fw-bold'; // Style as error
+                // Clear previous timeout if exists
+                if (feedbackTimeout) clearTimeout(feedbackTimeout);
+                // Set timeout to clear error message
+                feedbackTimeout = setTimeout(() => { feedbackElement.textContent = ''; }, 3000);
+                return;
+            }
+
+            // Check for Clipboard API availability (Requires HTTPS or Localhost)
+            if (!navigator.clipboard) {
+                console.error("Clipboard API not available. Requires HTTPS or localhost.");
+                // Inform user more directly for this critical issue
+                alert("Error: Could not copy link.\nThis feature requires a secure connection (HTTPS) or running on localhost.");
+                feedbackElement.textContent = 'Error: Requires HTTPS'; // Show minimal error text
+                feedbackElement.className = 'd-block mt-1 small text-danger fw-bold';
+                 // Clear previous timeout if exists
+                 if (feedbackTimeout) clearTimeout(feedbackTimeout);
+                 // Set timeout to clear error message
+                 feedbackTimeout = setTimeout(() => { feedbackElement.textContent = ''; }, 3000);
+                return;
+            }
+
+            // --- Attempt to Copy ---
+            navigator.clipboard.writeText(linkToCopy).then(() => {
+                console.log("Link copied successfully!");
+                // --- Show Feedback Text ---
+                feedbackElement.textContent = 'Link Copied!';
+                feedbackElement.className = 'd-block mt-1 small text-success fw-bold'; // Style as success
+
+                // Clear previous timeout if exists
+                if (feedbackTimeout) {
+                    clearTimeout(feedbackTimeout);
+                }
+
+                // Set timeout to clear the feedback message
+                feedbackTimeout = setTimeout(() => {
+                    feedbackElement.textContent = ''; // Clear the text
+                }, 2500); // Hide after 2.5 seconds
+
+            }).catch((error) => {
+                console.error('Error copying link:', error);
+                // --- Show Error Feedback Text ---
+                feedbackElement.textContent = 'Failed to copy!';
+                feedbackElement.className = 'd-block mt-1 small text-danger fw-bold'; // Style as error
+
+                 // Clear previous timeout if exists
+                 if (feedbackTimeout) {
+                     clearTimeout(feedbackTimeout);
+                 }
+                 // Set timeout to clear the error message
+                 feedbackTimeout = setTimeout(() => {
+                     feedbackElement.textContent = ''; // Clear the text
+                 }, 3000); // Keep error visible slightly longer
+            });
         });
+    } else {
+        if (!shareButton) console.error("Share button (#share-button) not found.");
+        if (!feedbackElement) console.error("Share feedback element (#share-feedback) not found.");
     }
-
-    // Close confirmation message
-    function closeCopyConfirmation() {
-        const confirmation = document.getElementById('copy-confirmation');
-        confirmation.style.display = 'none';
-    }
-
+});
 </script>
 
 <style>
+    /* Import Google Fonts (Example: Roboto and Merriweather) */
+    @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Roboto:wght@400;500;700&display=swap');
+
     body {
         font-family: 'Roboto', sans-serif;
-        background-color: #f9f9f9;
+        background-color: #f8f9fa; /* Light grey background */
+        color: #343a40; /* Default text color */
     }
-    
-    .card-title {
+
+    .blog-header {
+        background-color: #e9ecef; /* Slightly darker grey for header */
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .blog-header h1 {
         font-family: 'Merriweather', serif;
-        color: #333;
+        color: #212529; /* Darker heading color */
     }
 
-    .card-text {
-        color: #555;
-        
+    .blog-post-content {
+         /* border: 1px solid #dee2e6; */ /* <-- REMOVED BORDER */
+         /* The background, padding, etc., remain from the HTML classes */
     }
 
-    .btn-primary {
-        background-color: #007bff;
-        border: none;
+    /* Styling for content rendered from 'safe' filter */
+    .content-body {
+        /* Add base styles for expected content */
+    }
+    .content-body h1,
+    .content-body h2,
+    .content-body h3,
+    .content-body h4,
+    .content-body h5,
+    .content-body h6 {
+        font-family: 'Merriweather', serif;
+        margin-top: 1.75rem;
+        margin-bottom: 1rem;
+        font-weight: 700;
+        color: #212529;
+    }
+     .content-body h1 { font-size: 2.25rem; }
+     .content-body h2 { font-size: 2rem; }
+     .content-body h3 { font-size: 1.75rem; }
+     /* Add more as needed */
+
+    .content-body p {
+        margin-bottom: 1.25rem;
+        color: #495057; /* Slightly lighter text for paragraphs */
     }
 
-    .btn-primary:hover {
-        background-color: #0056b3;
+    .content-body a {
+        color: #0d6efd;
+        text-decoration: underline;
+    }
+    .content-body a:hover {
+        color: #0a58ca;
     }
 
-    .btn-success {
-        background-color: #28a745;
-        border: none;
+    .content-body ul,
+    .content-body ol {
+        padding-left: 2rem;
+        margin-bottom: 1.25rem;
     }
 
-    .btn-success:hover {
-        background-color: #218838;
+    .content-body blockquote {
+        border-left: 4px solid #adb5bd;
+        padding-left: 1rem;
+        margin-left: 0;
+        margin-bottom: 1.25rem;
+        font-style: italic;
+        color: #6c757d;
     }
 
-    .alert {
-        font-family: 'Roboto', sans-serif;
-        font-size: 1rem;
-        border-radius: 10px;
+     .content-body img {
+         max-width: 100%;
+         height: auto;
+         margin-top: 1rem;
+         margin-bottom: 1rem;
+         border-radius: 0.25rem; /* Optional: rounded images */
+     }
+
+    /* Styling for the feedback message */
+    #share-feedback {
+        min-height: 1.2em; /* Prevent layout shift when text appears/disappears */
+        transition: color 0.3s ease-in-out; /* Optional: Smooth color change */
     }
-    .card-body {
-    background-color: #f0f0f0; /* Light silver color */
-    color: #333; /* Darker text for contrast */
-    
-}
+
+    /* Responsive adjustments */
+    @media (max-width: 767.98px) {
+        .blog-header {
+            padding-top: 3rem;
+            padding-bottom: 3rem;
+        }
+        /* Padding adjustment might still be desired for full-width on mobile */
+        .blog-post-content {
+             padding: 1.5rem !important; /* Reduce padding on small screens */
+        }
+         .content-body h1 { font-size: 1.8rem; }
+         .content-body h2 { font-size: 1.6rem; }
+         /* Adjust other headings if needed */
+    }
+
 </style>
+
 {% endblock %}
